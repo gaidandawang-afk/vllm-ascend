@@ -116,9 +116,12 @@ def gen_global_log2phy_map(
             global_pos += 1
             local_expert_map.append(expert_id)
 
+        start_idx = ((rank + 1) * num_redundant_experts) // num_npu
         for _ in range(num_redundant_experts_list[rank]):
             success = False
-            for i in range(len(re_exp_assign_map)):
+            # start from start_idx and we walk at most `num_redundant_experts` steps
+            for step in range(num_redundant_experts):
+                i = (start_idx + step) % num_redundant_experts
                 eid, assigned = re_exp_assign_map[i]
                 if assigned:
                     continue
